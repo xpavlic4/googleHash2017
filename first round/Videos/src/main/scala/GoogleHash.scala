@@ -1,12 +1,18 @@
-import java.nio.charset.StandardCharsets
-import java.nio.file.{Files, Paths}
-
-import scala.annotation.tailrec
 import scala.io.Source
 
 object GoogleHash {
 
+  case class Video(index: Int, size: Int)
 
+
+  case class CacheConnection(index: Int, latency: Int)
+
+  case class Endpoint(index: Int, latency: Int, cacheConnections: Map[Int, CacheConnection])
+
+  case class RequestDescription(videoIndex: Int, endpointIndex: Int, count: Int)
+
+  case class Task(videos: Video, endpoints: Endpoint, requestDescriptions: RequestDescription, cacheSize: Int)
+  
   def main(args: Array[String]): Unit = {
     //        val filename = "logo"
 //    val filename = "me_at_the_zoo.in"
@@ -30,13 +36,20 @@ object GoogleHash {
 
     println( vids.mkString(" MB "))
 
+  def readTask(filename: String): Task = {
+    val tmp = Source.fromFile(filename).getLines().toSeq
+    val videos :: endpoints :: requests :: caches :: cacheSize :: Nil = tmp.head.split(' ').map(_.toInt).toList
+    val videosList = tmp.tail.head.split(' ').zipWithIndex.map { case (size, index) => Video(index, size.toInt) }
 
-//    var i = 0
-//    val commands = tmp.tail.zipWithIndex.flatMap {
-//      case (line, index) => p1(index, line)
-//    }
-//    commands.foreach(println)
-//
-//    Files.write(Paths.get(s"$filename.out"), (commands.length.toString :: commands).mkString("\n").getBytes(StandardCharsets.UTF_8))
+//    val endpointsList = tmp.drop(2).foldLeft(List.empty[Endpoint])
+//    Task(videosList, )
+    ???
+  }
+
+
+  def main(args: Array[String]): Unit = {
+    //        val filename = "logo"
+    readTask("example.txt")
+
   }
 }
